@@ -1,0 +1,335 @@
+index.html
+<!DOCTYPE html>
+
+<html lang="fr"> 
+    <head>
+        <meta charset="UTF-8"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <title>Ecomap - Potentiel Énergétique</title>
+        
+        <!-- CSS principal -->
+        <link rel="stylesheet" href="style.css"> 
+
+        <!-- Police d'écriture -->
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet"> 
+
+        <!-- Leaflet.js - Carte interactive open source (pas de clé API requise) -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"> </script>
+    </head>
+
+    <body>
+
+        <!-- ========== NAVIGATION ========== -->
+        <nav class="bar-navigation">  
+
+            <!-- Logo -->
+            <div class="logo"> 
+                <a href="#accueil" class="logo-lien"> 🌍 EcoMap</a>
+            </div>
+
+            <!-- Menu de navigation -->
+            <ul class="menu"> 
+                <li><a href="#accueil" class="lien-menu"> Accueil</a></li>
+                <li><a href="#carte" class="lien-menu"> Carte</a></li>
+                <li><a href="#methodologie" class="lien-menu"> Méthodologie</a></li>
+                <li><a href="#equipe" class="lien-menu"> Équipe</a></li>
+                <li><a href="#contact" class="lien-menu"> Contact</a></li>
+            </ul>
+
+        </nav>
+
+        <!-- ========== EN-TÊTE / HERO ========== -->
+        <header class="header" id="accueil"> 
+            <div class="en_tete"> 
+                <h1 class="animate-fadein"> EcoMap</h1>
+                <h2 class="animate-fadein"> Votre carte d'énergie renouvelable</h2>
+                <p class="animate-fadein"> 
+                    EcoMap vous permet de visualiser et calculer le potentiel énergétique de n'importe quel lieu. 
+                    Grâce à notre carte interactive, découvrez comment optimiser l'énergie de votre environnement 
+                    de manière simple et efficace.
+                </p>
+                <!-- Bouton d'appel à l'action -->
+                <a href="#carte" class="bouton-cta animate-fadein"> Explorer la carte ↓</a>
+            </div>
+        </header>
+
+        <!-- ========== CONTENU PRINCIPAL ========== -->
+        <main>
+
+            <!-- ===== SECTION CARTE + POTENTIEL ===== -->
+            <section class="section-carte" id="carte"> 
+                <h2 class="titre-section"> Carte Interactive</h2>
+                
+                <!-- Barre de recherche d'adresse -->
+                <div class="recherche"> 
+                    <div class="bar-recherche"> 
+                        <input 
+                            type="text" 
+                            id="champ-recherche" 
+                            placeholder="Rechercher un lieu (ville, région, pays...)" 
+                            class="champ-recherche"
+                            autocomplete="off"
+                        >
+                        <button id="btn-recherche" class="btn-recherche-icone" title="Rechercher"> 🔍</button>
+                    </div>
+                    <!-- Suggestions d'autocomplétion -->
+                    <ul id="suggestions" class="suggestions-liste"> </ul>
+                </div>
+
+                <!-- Conteneur : Carte + Potentiel côte à côte -->
+                <div class="conteneur-principal"> 
+                    
+                    <!-- Zone de la carte Leaflet -->
+                    <div class="conteneur-carte"> 
+                        <div id="carte-leaflet"> </div>
+                    </div>
+
+                    <!-- Panneau potentiel énergétique à droite -->
+                    <div class="conteneur-potentiel"> 
+                        <h3 class="titre-potentiel"> Potentiel Énergétique </h3>
+
+                        <!-- Lieu sélectionné -->
+                        <p id="lieu-selectionne" class="lieu-selectionne"> Cliquez sur la carte ou recherchez un lieu </p>
+
+                        <!-- NOTE GLOBALE -->
+                        <div class="note-globale"> 
+                            <span class="texte-global"> Note globale </span>
+                            <div class="chiffre-global"> 
+                                <span id="note-globale-valeur"> — </span>
+                                <span class="sur-dix-global"> /10 </span>
+                            </div>
+                        </div>
+                        
+                        <!-- ÉNERGIE SOLAIRE -->
+                        <div class="carte-energie" id="carte-solaire"> 
+                            <div class="icone-energie"> ☀️ </div>
+                            <h4 class="nom-energie"> Solaire </h4>
+                            <div class="note-energie"> 
+                                <span class="chiffre-note" id="note-solaire"> —</span>
+                                <span class="sur-dix"> /10 </span>
+                            </div>
+                            <!-- Barre de progression -->
+                            <div class="barre-progression"> 
+                                <div class="barre-remplissage" id="barre-solaire" style="width: 0%"> </div>
+                            </div>
+                            <p class="description-energie" id="desc-solaire"> Sélectionnez un lieu </p>
+                        </div>
+
+                        <!-- ÉNERGIE ÉOLIENNE -->
+                        <div class="carte-energie" id="carte-eolien"> 
+                            <div class="icone-energie"> 💨 </div>
+                            <h4 class="nom-energie"> Éolien </h4>
+                            <div class="note-energie"> 
+                                <span class="chiffre-note" id="note-eolien"> —</span>
+                                <span class="sur-dix"> /10 </span>
+                            </div>
+                            <div class="barre-progression"> 
+                                <div class="barre-remplissage" id="barre-eolien" style="width: 0%"> </div>
+                            </div>
+                            <p class="description-energie" id="desc-eolien"> Sélectionnez un lieu </p>
+                        </div>
+
+                        <!-- ÉNERGIE HYDRAULIQUE -->
+                        <div class="carte-energie" id="carte-hydraulique"> 
+                            <div class="icone-energie"> 💧 </div>
+                            <h4 class="nom-energie"> Hydraulique </h4>
+                            <div class="note-energie"> 
+                                <span class="chiffre-note" id="note-hydraulique"> —</span>
+                                <span class="sur-dix"> /10 </span>
+                            </div>
+                            <div class="barre-progression"> 
+                                <div class="barre-remplissage" id="barre-hydraulique" style="width: 0%"> </div>
+                            </div>
+                            <p class="description-energie" id="desc-hydraulique"> Sélectionnez un lieu </p>
+                        </div>
+
+                        <!-- ÉNERGIE GÉOTHERMIQUE -->
+                        <div class="carte-energie" id="carte-geothermie"> 
+                            <div class="icone-energie"> 🌋 </div>
+                            <h4 class="nom-energie"> Géothermie </h4>
+                            <div class="note-energie"> 
+                                <span class="chiffre-note" id="note-geothermie"> —</span>
+                                <span class="sur-dix"> /10 </span>
+                            </div>
+                            <div class="barre-progression"> 
+                                <div class="barre-remplissage" id="barre-geothermie" style="width: 0%"> </div>
+                            </div>
+                            <p class="description-energie" id="desc-geothermie"> Sélectionnez un lieu </p>
+                        </div>
+
+                        <!-- Indicateur de chargement -->
+                        <div id="chargement" class="chargement hidden"> 
+                            <div class="spinner"> </div>
+                            <p> Calcul en cours... </p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== SECTION MÉTHODOLOGIE ===== -->
+            <section class="section-methodologie" id="methodologie"> 
+                <h2 class="titre-section"> Notre Méthodologie </h2>
+                <p class="description-section"> 
+                    Découvrez les formules et calculs utilisés pour évaluer le potentiel énergétique
+                </p>
+
+                <!-- 4 formules en grille -->
+                <div class="grille-formules"> 
+                    
+                    <!-- Formule Solaire -->
+                    <div class="bloc-formule"> 
+                        <div class="entete-formule"> 
+                            <span class="icone-formule"> ☀️</span>
+                            <h3> Énergie Solaire </h3>
+                        </div>
+                        <div class="formule"> E = S × I × η × PR </div>
+                        <ul class="explication"> 
+                            <li><strong> E </strong> = Énergie produite (kWh) </li>
+                            <li><strong> S </strong> = Surface des panneaux (m²) </li>
+                            <li><strong> I </strong> = Irradiation solaire (kWh/m²) </li>
+                            <li><strong> η </strong> = Rendement du panneau </li>
+                            <li><strong> PR </strong> = Ratio de performance </li>
+                        </ul>
+                    </div>
+
+                    <!-- Formule Éolienne -->
+                    <div class="bloc-formule"> 
+                        <div class="entete-formule"> 
+                            <span class="icone-formule"> 💨 </span>
+                            <h3> Énergie Éolienne </h3>
+                        </div>
+                        <div class="formule"> P = ½ × ρ × A × v³ </div>
+                        <ul class="explication"> 
+                            <li><strong> P </strong> = Puissance (Watts)</li>
+                            <li><strong> ρ </strong> = Densité de l'air (kg/m³)</li>
+                            <li><strong> A </strong> = Surface balayée (m²)</li>
+                            <li><strong> v </strong> = Vitesse du vent (m/s)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Formule Hydraulique -->
+                    <div class="bloc-formule"> 
+                        <div class="entete-formule"> 
+                            <span class="icone-formule"> 💧 </span>
+                            <h3>Énergie Hydraulique</h3>
+                        </div>
+                        <div class="formule"> P = ρ × g × h × Q × η</div>
+                        <ul class="explication"> 
+                            <li><strong> P </strong> = Puissance (Watts) </li>
+                            <li><strong> ρ </strong> = Densité de l'eau (kg/m³) </li>
+                            <li><strong> g </strong> = Gravité (9.81 m/s²) </li>
+                            <li><strong> h </strong> = Hauteur de chute (m) </li>
+                            <li><strong> Q </strong> = Débit (m³/s) </li>
+                            <li><strong> η </strong> = Rendement turbine </li>
+                        </ul>
+                    </div>
+
+                    <!-- Formule Géothermique -->
+                    <div class="bloc-formule"> 
+                        <div class="entete-formule"> 
+                            <span class="icone-formule"> 🌋 </span>
+                            <h3>Énergie Géothermique</h3>
+                        </div>
+                        <div class="formule"> Q = m × Cp × ΔT </div>
+                        <ul class="explication"> 
+                            <li><strong> Q </strong> = Énergie thermique (J) </li>
+                            <li><strong> m </strong> = Masse du fluide (kg) </li>
+                            <li><strong> Cp </strong> = Capacité thermique (J/kg·K) </li>
+                            <li><strong> ΔT </strong> = Différence température (K) </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ===== SECTION ÉQUIPE ===== -->
+            <section class="section-equipe" id="equipe"> 
+                <h2 class="titre-section"> Notre Équipe </h2>
+
+                <div class="grille-equipe"> 
+                    <div class="carte-membre"> 
+                        <div class="avatar-membre"> LH </div>
+                        <h3 class="nom-membre"> Lindsay Hoarau </h3>
+                    </div>
+                    <div class="carte-membre"> 
+                        <div class="avatar-membre"> GO </div>
+                        <h3 class="nom-membre"> Gomez Océane </h3>
+                    </div>
+                    <div class="carte-membre"> 
+                        <div class="avatar-membre"> MR </div>
+                        <h3 class="nom-membre"> Miahy Raharijoana</h3>
+                    </div>
+                    <div class="carte-membre"> 
+                        <div class="avatar-membre"> MM </div>
+                        <h3 class="nom-membre"> Madi Mraâti </h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== FORMULAIRE DE CONTACT ===== -->
+            <section class="section-contact" id="contact"> 
+                <h2 class="titre-section"> Contactez-nous </h2>
+                
+                <form class="formulaire-contact" id="formulaire-contact"> 
+                    <div class="groupe-champ"> 
+                        <label for="nom"> Nom </label>
+                        <input type="text" id="nom" name="nom" placeholder="Votre nom" required>
+                    </div>
+
+                    <div class="groupe-champ"> 
+                        <label for="email"> Email</label>
+                        <input type="email" id="email" name="email" placeholder="votre@email.com" required>
+                    </div>
+
+                    <div class="groupe-champ"> 
+                        <label for="message"> Message </label>
+                        <textarea id="message" name="message" rows="5" placeholder="Votre message..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="bouton-envoyer"> Envoyer </button>
+
+                    <!-- Message de confirmation -->
+                    <div id="confirmation-envoi" class="confirmation-envoi hidden"> 
+                        ✅ Message envoyé avec succès ! Nous vous répondrons rapidement.
+                    </div>
+                </form>
+            </section>
+
+        </main>
+
+        <!-- ========== FOOTER ========== -->
+        <footer class="pied-de-page"> 
+            <div class="contenu-footer"> 
+                
+                <div class="colonne-footer"> 
+                    <h3> EcoMap</h3>
+                    <p> Cartographie du potentiel énergétique renouvelable </p>
+                    <p> Données : Open-Meteo API · Nominatim OSM< /p>
+                </div>
+
+                <div class="colonne-footer"> 
+                    <h4> Liens rapides </h4>
+                    <ul class="liste-footer"> 
+                        <li><a href="#accueil"> Accueil </a></li>
+                        <li><a href="#carte"> Carte </a></li>
+                        <li><a href="#methodologie"> Méthodologie </a></li>
+                        <li><a href="#equipe"> Équipe </a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="copyright"> 
+                <p> © 2024 EcoMap - Projet Étudiant | Énergies Renouvelables </p>
+            </div>
+        </footer>
+
+        <!-- Scripts JS -->
+        <script src="script.js" defer></script>
+        <script src="animations.js" defer></script>
+
+    </body>
+    
+</html>
