@@ -1,0 +1,859 @@
+style.css
+/* ============================================
+   VARIABLES COULEURS ET THÈME GLOBAL
+   ============================================ */
+
+:root {
+    --fond: #f8f6f2;           /* crème - fond principal */
+    --texte: #222;             /* noir  - texte courant */
+    --marron: #6b4f3b;         /* marron - couleur principale */
+    --vert: #4a7c59;           /* vert nature - accent */
+    --vert-clair: #a8d5ba;     /* vert clair - dégradés */
+    --blanc: #ffffff;          /* blanc */
+    --gris-clair: #e8e8e8;     /* gris clair - séparateurs */
+    --rouge-alerte: #e74c3c;   /* rouge - alertes / faible potentiel */
+    --jaune-moyen: #f39c12;    /* jaune - potentiel moyen */
+}
+
+
+/* ============================================
+   RESET ET BASE GLOBALE
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background-color: var(--fond);
+    color: var(--texte);
+    line-height: 1.6;
+}
+
+/* Scroll fluide pour les ancres */
+html {
+    scroll-behavior: smooth;
+}
+
+
+/* ============================================
+   ANIMATIONS D'ENTRÉE (fade-in au chargement)
+   ============================================ */
+
+.animate-fadein {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadein 0.8s ease forwards;
+}
+
+/* Délais en cascade pour l'en-tête */
+.en_tete h1.animate-fadein  { animation-delay: 0.1s; }
+.en_tete h2.animate-fadein  { animation-delay: 0.3s; }
+.en_tete p.animate-fadein   { animation-delay: 0.5s; }
+.bouton-cta.animate-fadein  { animation-delay: 0.7s; }
+
+@keyframes fadein {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Classe utilitaire pour cacher un élément */
+.hidden {
+    display: none !important;
+}
+
+
+/* ============================================
+   NAVIGATION (barre fixe en haut)
+   ============================================ */
+
+.bar-navigation {
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background-color: var(--blanc);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: box-shadow 0.3s ease;
+}
+
+/* Logo cliquable */
+.logo-lien {
+    font-size: 30px;
+    font-weight: bold;
+    color: var(--marron);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.logo-lien:hover {
+    opacity: 0.8;
+}
+
+/* Liste des liens de menu */
+.menu {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+}
+
+/* Style des liens */
+.lien-menu {
+    font-size: 18px;
+    color: var(--texte);               
+    text-decoration: none;      
+    border-bottom: 2px solid transparent; 
+    padding-bottom: 3px;        
+    transition: border-color 0.3s ease, color 0.3s ease; 
+}
+
+.lien-menu:hover,
+.lien-menu.actif {
+    color: var(--marron);           
+    border-bottom-color: var(--marron); 
+}
+
+
+/* ============================================
+   EN-TÊTE / HERO
+   ============================================ */
+
+.header {
+    background-color: var(--fond); 
+    padding: 80px 20px 60px;
+    text-align: center;
+}
+
+/* Centrage du contenu de l'en-tête */
+.en_tete {
+    max-width: 800px; 
+    margin: 0 auto;
+}
+
+/* Titre principal */
+.en_tete h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--marron);
+    margin-bottom: 10px;
+}
+
+/* Sous-titre / slogan */
+.en_tete h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--vert);
+    margin-bottom: 20px;
+}
+
+/* Description */
+.en_tete p {
+    font-size: 1.1rem;
+    color: var(--texte);
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+/* Bouton CTA (call-to-action) */
+.bouton-cta {
+    display: inline-block;
+    padding: 14px 35px;
+    background-color: var(--vert);
+    color: var(--blanc);
+    text-decoration: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.bouton-cta:hover {
+    background-color: var(--marron);
+    transform: translateY(-3px);
+}
+
+
+/* ============================================
+   BARRE DE RECHERCHE D'ADRESSE
+   ============================================ */
+
+.recherche {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0 40px 0;
+    position: relative;
+}
+
+/* Barre de recherche avec bouton intégré */
+.bar-recherche {
+    width: 50%;
+    max-width: 600px;
+    border-radius: 25px;
+    overflow: hidden;    
+    border: 2px solid var(--marron);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+}
+
+/* Champ texte de recherche */
+.champ-recherche {
+    flex: 1;
+    padding: 15px 20px;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+    font-family: 'Poppins', Arial, sans-serif;
+    background: var(--blanc);
+}
+
+.champ-recherche::placeholder {
+    color: #aaa;
+}
+
+/* Bouton icône de recherche */
+.btn-recherche-icone {
+    padding: 15px 20px;
+    background: var(--marron);
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-recherche-icone:hover {
+    background: var(--vert);
+}
+
+/* Liste de suggestions d'autocomplétion */
+.suggestions-liste {
+    width: 50%;
+    max-width: 600px;
+    background: var(--blanc);
+    border: 1px solid var(--gris-clair);
+    border-radius: 10px;
+    list-style: none;
+    margin-top: 5px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+/* Item de suggestion */
+.suggestions-liste li {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--gris-clair);
+    transition: background-color 0.2s ease;
+}
+
+.suggestions-liste li:last-child {
+    border-bottom: none;
+}
+
+.suggestions-liste li:hover {
+    background-color: var(--fond);
+    color: var(--marron);
+}
+
+
+/* ============================================
+   SECTION CARTE + POTENTIEL CÔTE À CÔTE
+   ============================================ */
+
+.section-carte {
+    padding: 60px 20px;
+    background-color: var(--blanc);
+}
+
+/* Grille : carte (3/4) + potentiel (1/4) */
+.conteneur-principal {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Conteneur de la carte Leaflet */
+.conteneur-carte {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    height: 600px;  /* Hauteur fixe pour que Leaflet puisse se dimensionner correctement */
+}
+
+/* La carte Leaflet prend tout l'espace du conteneur */
+#carte-leaflet {
+    height: 100% !important;
+    width: 100%;
+    border-radius: 15px;
+}
+
+
+/* ============================================
+   PANNEAU POTENTIEL ÉNERGÉTIQUE (droite)
+   ============================================ */
+
+.conteneur-potentiel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Titre du panneau */
+.titre-potentiel {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--marron);
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+/* Texte du lieu sélectionné */
+.lieu-selectionne {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #777;
+    font-style: italic;
+    min-height: 20px;
+}
+
+/* Bloc note globale (dégradé vert) */
+.note-globale {
+    background: linear-gradient(135deg, var(--vert) 0%, var(--vert-clair) 100%);
+    padding: 18px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.texte-global {
+    display: block;
+    color: var(--blanc);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.chiffre-global {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--blanc);
+}
+
+.sur-dix-global {
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+/* Carte individuelle par type d'énergie */
+.carte-energie {
+    background-color: var(--fond);
+    padding: 12px 15px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 4px solid var(--gris-clair);
+}
+
+.carte-energie:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Icône de l'énergie */
+.icone-energie {
+    font-size: 1.6rem;
+    margin-bottom: 5px;
+}
+
+/* Nom de l'énergie */
+.nom-energie {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--marron);
+    margin-bottom: 5px;
+}
+
+/* Chiffre de la note */
+.note-energie {
+    margin: 6px 0;
+}
+
+.chiffre-note {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--vert);
+    transition: color 0.4s ease;
+}
+
+.sur-dix {
+    font-size: 0.9rem;
+    color: var(--texte);
+}
+
+/* Description textuelle sous la note */
+.description-energie {
+    font-size: 0.78rem;
+    color: #666;
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+/* Barre de progression colorée */
+.barre-progression {
+    width: 100%;
+    height: 6px;
+    background-color: var(--gris-clair);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.barre-remplissage {
+    height: 100%;
+    background: linear-gradient(90deg, var(--vert-clair), var(--vert));
+    border-radius: 3px;
+    transition: width 0.8s ease;
+}
+
+/* Indicateur de chargement (spinner) */
+.chargement {
+    text-align: center;
+    padding: 15px;
+    color: var(--vert);
+    font-size: 0.9rem;
+}
+
+.spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--gris-clair);
+    border-top-color: var(--vert);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 10px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+
+/* ============================================
+   TITRES DE SECTION (réutilisables)
+   ============================================ */
+
+.titre-section {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--marron);
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.description-section {
+    font-size: 1.1rem;
+    color: var(--texte);
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+}
+
+
+/* ============================================
+   SECTION MÉTHODOLOGIE (4 formules en grille)
+   ============================================ */
+
+.section-methodologie {
+    padding: 60px 20px;
+    background-color: var(--fond);
+}
+
+/* Grille 4 colonnes */
+.grille-formules {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Bloc formule individuel */
+.bloc-formule {
+    background-color: var(--blanc);
+    padding: 25px;
+    border-radius: 15px;
+    border-left: 5px solid var(--vert);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.bloc-formule:hover {
+    transform: translateY(-5px);
+}
+
+/* En-tête de la formule (icône + titre) */
+.entete-formule {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.icone-formule {
+    font-size: 2rem;
+}
+
+.entete-formule h3 {
+    font-size: 1.05rem;
+    color: var(--marron);
+}
+
+/* Formule mathématique stylisée */
+.formule {
+    background-color: var(--fond);
+    padding: 15px;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--vert);
+    margin-bottom: 15px;
+    border: 2px dashed var(--vert);
+}
+
+/* Liste de variables */
+.explication {
+    list-style: none;
+    padding: 0;
+}
+
+.explication li {
+    padding: 6px 0;
+    font-size: 0.83rem;
+    color: var(--texte);
+    border-bottom: 1px solid var(--gris-clair);
+}
+
+.explication li:last-child {
+    border-bottom: none;
+}
+
+.explication strong {
+    color: var(--marron);
+    font-weight: 600;
+}
+
+
+/* ============================================
+   SECTION ÉQUIPE (4 membres en grille)
+   ============================================ */
+
+.section-equipe {
+    padding: 60px 20px;
+    background-color: var(--blanc);
+}
+
+/* Grille 4 colonnes */
+.grille-equipe {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Carte membre */
+.carte-membre {
+    background-color: var(--fond);
+    padding: 35px 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carte-membre:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Avatar initiales du membre */
+.avatar-membre {
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, var(--vert), var(--marron));
+    color: var(--blanc);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 auto 15px;
+}
+
+/* Nom du membre */
+.nom-membre {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--marron);
+}
+
+
+/* ============================================
+   FORMULAIRE DE CONTACT
+   ============================================ */
+
+.section-contact {
+    padding: 60px 20px;
+    background-color: var(--fond);
+}
+
+/* Formulaire centré */
+.formulaire-contact {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: var(--blanc);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Groupe label + input */
+.groupe-champ {
+    margin-bottom: 25px;
+}
+
+.groupe-champ label {
+    display: block;
+    font-weight: 600;
+    color: var(--marron);
+    margin-bottom: 8px;
+}
+
+.groupe-champ input,
+.groupe-champ textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--gris-clair);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Poppins', Arial, sans-serif;
+    transition: border-color 0.3s ease;
+}
+
+.groupe-champ input:focus,
+.groupe-champ textarea:focus {
+    outline: none;
+    border-color: var(--marron);
+}
+
+.groupe-champ textarea {
+    resize: vertical;
+}
+
+/* Bouton d'envoi */
+.bouton-envoyer {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--vert);
+    color: var(--blanc);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.bouton-envoyer:hover {
+    background-color: var(--marron);
+    transform: translateY(-2px);
+}
+
+/* Message de confirmation après envoi */
+.confirmation-envoi {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+}
+
+
+/* ============================================
+   FOOTER / PIED DE PAGE
+   ============================================ */
+
+.pied-de-page {
+    background-color: var(--marron);
+    color: var(--blanc);
+    padding: 40px 20px 20px;
+}
+
+/* Grille footer : description + liens */
+.contenu-footer {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto 30px;
+}
+
+/* Titres des colonnes footer */
+.colonne-footer h3,
+.colonne-footer h4 {
+    color: var(--vert-clair);
+    margin-bottom: 15px;
+}
+
+.colonne-footer p {
+    margin: 8px 0;
+    line-height: 1.6;
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+/* Liste de liens footer */
+.liste-footer {
+    list-style: none;
+    padding: 0;
+}
+
+.liste-footer li {
+    margin: 8px 0;
+}
+
+.liste-footer a {
+    color: var(--blanc);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.liste-footer a:hover {
+    color: var(--vert-clair);
+}
+
+/* Ligne de copyright */
+.copyright {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.85rem;
+    opacity: 0.75;
+}
+
+
+/* ============================================
+   RESPONSIVE - TABLETTE (max 1024px)
+   ============================================ */
+
+@media (max-width: 1024px) {
+    /* Méthodologie : 2 colonnes */
+    .grille-formules {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Équipe : 2 colonnes */
+    .grille-equipe {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+/* ============================================
+   RESPONSIVE - MOBILE (max 768px)
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Navigation en colonne */
+    .bar-navigation {
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .menu {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    /* Titres plus petits */
+    .en_tete h1 {
+        font-size: 2rem;
+    }
+
+    .titre-section {
+        font-size: 2rem;
+    }
+
+    /* Barre de recherche plus large */
+    .bar-recherche,
+    .suggestions-liste {
+        width: 80%;
+    }
+
+    /* Carte et potentiel en colonne */
+    .conteneur-principal {
+        grid-template-columns: 1fr;
+    }
+
+    /* Méthodologie : 1 colonne */
+    .grille-formules {
+        grid-template-columns: 1fr;
+    }
+
+    /* Équipe : 1 colonne */
+    .grille-equipe {
+        grid-template-columns: 1fr;
+    }
+
+    /* Footer en colonne */
+    .contenu-footer {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+}
+
+
+/* ============================================
+   RESPONSIVE - SMARTPHONE (max 480px)
+   ============================================ */
+
+@media (max-width: 480px) {
+    .bar-recherche,
+    .suggestions-liste {
+        width: 90%;
+    }
+
+    .formulaire-contact {
+        padding: 25px;
+    }
+
+    .conteneur-carte {
+        height: 350px;
+    }
+}
