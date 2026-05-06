@@ -1,4 +1,3 @@
-style.css
 /* ============================================
    VARIABLES COULEURS ET THÈME GLOBAL
    ============================================ */
@@ -6,24 +5,23 @@ style.css
 :root {
     --fond: #f8f6f2;           /* crème - fond principal */
     --texte: #222;             /* noir  - texte courant */
-    --marron: #6b4f3b;         /* marron - couleur principale */
-    --vert: #4a7c59;           /* vert nature - accent */
-    --vert-clair: #a8d5ba;     /* vert clair - dégradés */
+    --marron: #6b4f3b;         /* marron */
+    --vert: #4a7c59;           /* vert */
+    --vert-clair: #a8d5ba;     /* vert clair */
     --blanc: #ffffff;          /* blanc */
-    --gris-clair: #e8e8e8;     /* gris clair - séparateurs */
+    --gris-clair: #e8e8e8;     /* gris clair */
     --rouge-alerte: #e74c3c;   /* rouge - alertes / faible potentiel */
     --jaune-moyen: #f39c12;    /* jaune - potentiel moyen */
 }
 
 
 /* ============================================
-   RESET ET BASE GLOBALE
+   BASE GLOBALE
    ============================================ */
 
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 body {
@@ -40,35 +38,6 @@ html {
 
 
 /* ============================================
-   ANIMATIONS D'ENTRÉE (fade-in au chargement)
-   ============================================ */
-
-.animate-fadein {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadein 0.8s ease forwards;
-}
-
-/* Délais en cascade pour l'en-tête */
-.en_tete h1.animate-fadein  { animation-delay: 0.1s; }
-.en_tete h2.animate-fadein  { animation-delay: 0.3s; }
-.en_tete p.animate-fadein   { animation-delay: 0.5s; }
-.bouton-cta.animate-fadein  { animation-delay: 0.7s; }
-
-@keyframes fadein {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Classe utilitaire pour cacher un élément */
-.hidden {
-    display: none !important;
-}
-
-
-/* ============================================
    NAVIGATION (barre fixe en haut)
    ============================================ */
 
@@ -76,26 +45,26 @@ html {
     display: flex; 
     justify-content: space-between;
     align-items: center;
-    padding: 15px 40px;
-    background-color: var(--blanc);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 0px 40px;
+    background-color: rgba(255, 255, 255, 0.9);
     position: sticky;
     top: 0;
-    z-index: 1000;
-    transition: box-shadow 0.3s ease;
+    z-index: 1;
 }
 
 /* Logo cliquable */
-.logo-lien {
-    font-size: 30px;
-    font-weight: bold;
-    color: var(--marron);
-    text-decoration: none;
-    transition: opacity 0.2s ease;
+.logo {
+    display: flex;
+    align-items: center;   
+    justify-content: center; 
+    gap: 10px;
 }
 
-.logo-lien:hover {
-    opacity: 0.8;
+.logo-text {
+    font-size: 30px;
+    color: var(--marron);
+    text-decoration: none;
+    font-weight: bold;
 }
 
 /* Liste des liens de menu */
@@ -106,44 +75,50 @@ html {
 }
 
 /* Style des liens */
-.lien-menu {
+.menu-text {
     font-size: 18px;
-    color: var(--texte);               
-    text-decoration: none;      
-    border-bottom: 2px solid transparent; 
-    padding-bottom: 3px;        
-    transition: border-color 0.3s ease, color 0.3s ease; 
+    color: rgba(0, 0, 0, 0.5);
+    text-decoration: none;
 }
 
-.lien-menu:hover,
-.lien-menu.actif {
-    color: var(--marron);           
-    border-bottom-color: var(--marron); 
+.menu-text:hover {
+    color: var(--texte);
 }
-
 
 /* ============================================
-   EN-TÊTE / HERO
+   EN-TÊTE
    ============================================ */
 
 .header {
-    background-color: var(--fond); 
+    background-image: url("img/en_tete.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     padding: 80px 20px 60px;
-    text-align: center;
+    text-align: center;  
 }
 
 /* Centrage du contenu de l'en-tête */
 .en_tete {
-    max-width: 800px; 
+    max-width: 900px; 
     margin: 0 auto;
+
+    background-color: rgba(255, 255, 255, 0.77);
+    padding: 50px;
+    border-radius: 20px;
+}
+
+.en_tete:hover{
+    background-color: rgb(255, 255, 255);
 }
 
 /* Titre principal */
 .en_tete h1 {
     font-size: 3rem;
-    font-weight: 700;
+    font-weight: bold;
     color: var(--marron);
     margin-bottom: 10px;
+    
 }
 
 /* Sous-titre / slogan */
@@ -162,8 +137,8 @@ html {
     margin-bottom: 30px;
 }
 
-/* Bouton CTA (call-to-action) */
-.bouton-cta {
+/* Bouton  */
+.bouton {
     display: inline-block;
     padding: 14px 35px;
     background-color: var(--vert);
@@ -175,7 +150,7 @@ html {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.bouton-cta:hover {
+.bouton:hover {
     background-color: var(--marron);
     transform: translateY(-3px);
 }
@@ -189,18 +164,17 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 20px 0 40px 0;
     position: relative;
+    padding-bottom: 80px;
 }
 
-/* Barre de recherche avec bouton intégré */
+/* Barre de recherche */
 .bar-recherche {
-    width: 50%;
-    max-width: 600px;
+    width: 70%;
+    max-width: 700px;
     border-radius: 25px;
     overflow: hidden;    
-    border: 2px solid var(--marron);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 3px solid var(--marron);
     display: flex;
     align-items: center;
 }
@@ -216,50 +190,22 @@ html {
     background: var(--blanc);
 }
 
-.champ-recherche::placeholder {
-    color: #aaa;
-}
-
-/* Bouton icône de recherche */
-.btn-recherche-icone {
-    padding: 15px 20px;
-    background: var(--marron);
-    border: none;
-    cursor: pointer;
-    font-size: 1.1rem;
-    transition: background-color 0.3s ease;
-}
-
-.btn-recherche-icone:hover {
-    background: var(--vert);
-}
-
-/* Liste de suggestions d'autocomplétion */
+/* Liste de suggestions d'autocomplétion pour la recherche */
 .suggestions-liste {
-    width: 50%;
-    max-width: 600px;
+    width: 70%;
+    max-width: 650px;
     background: var(--blanc);
-    border: 1px solid var(--gris-clair);
     border-radius: 10px;
     list-style: none;
-    margin-top: 5px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    max-height: 220px;
+    max-height: 150px;
     overflow-y: auto;
-    z-index: 100;
 }
 
-/* Item de suggestion */
 .suggestions-liste li {
     padding: 12px 20px;
     cursor: pointer;
     font-size: 0.9rem;
     border-bottom: 1px solid var(--gris-clair);
-    transition: background-color 0.2s ease;
-}
-
-.suggestions-liste li:last-child {
-    border-bottom: none;
 }
 
 .suggestions-liste li:hover {
@@ -267,9 +213,8 @@ html {
     color: var(--marron);
 }
 
-
 /* ============================================
-   SECTION CARTE + POTENTIEL CÔTE À CÔTE
+   SECTION CARTE + POTENTIEL 
    ============================================ */
 
 .section-carte {
@@ -277,39 +222,39 @@ html {
     background-color: var(--blanc);
 }
 
-/* Grille : carte (3/4) + potentiel (1/4) */
-.conteneur-principal {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    gap: 30px;
-    max-width: 1400px;
-    margin: 0 auto;
+.bloc-principal {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
 }
 
-/* Conteneur de la carte Leaflet */
-.conteneur-carte {
+/* Bloc de la carte Leaflet */
+.bloc-carte {
+    flex: 2;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    height: 600px;  /* Hauteur fixe pour que Leaflet puisse se dimensionner correctement */
+    height: 500px;
+    z-index:0;
 }
 
-/* La carte Leaflet prend tout l'espace du conteneur */
+/* La carte Leaflet prend tout l'espace du bloc */
 #carte-leaflet {
-    height: 100% !important;
+    height: 100%;
     width: 100%;
-    border-radius: 15px;
 }
-
 
 /* ============================================
-   PANNEAU POTENTIEL ÉNERGÉTIQUE (droite)
+   PANNEAU POTENTIEL ÉNERGÉTIQUE
    ============================================ */
 
-.conteneur-potentiel {
+.bloc-potentiel {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 15px;
+    padding: 20px;
+    background: rgba(0, 120, 255, 0.12);
+    border-radius: 20px;
 }
 
 /* Titre du panneau */
@@ -336,7 +281,7 @@ html {
     padding: 18px;
     border-radius: 12px;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 15px rgb(var(--gris-clair) | 0.15);
 }
 
 .texte-global {
