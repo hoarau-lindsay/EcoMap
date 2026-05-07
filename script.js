@@ -2,6 +2,34 @@
    script.js — Carte Leaflet + APIs (Nominatim + Open-Meteo)
    ============================================================ */
 
+   
+// ouvrir popup selon carte
+document.querySelectorAll(".carte-energie").forEach(carte => {
+
+    carte.addEventListener("click", () => {
+
+        let id = carte.id.replace("carte", "popup");
+
+        document.getElementById(id).classList.remove("hidden");
+    });
+});
+
+
+document.querySelectorAll(".fermer").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+        let id = e.target.getAttribute("data-close");
+        document.getElementById(id).classList.add("hidden");
+    });
+});
+
+// clic extérieur
+document.querySelectorAll(".popup-energie").forEach(popup => {
+    popup.addEventListener("click", (e) => {
+        if (e.target === popup) {
+            popup.classList.add("hidden");
+        }
+    });
+});
 
 /* ============================================================
    1. INITIALISATION DE LA CARTE LEAFLET

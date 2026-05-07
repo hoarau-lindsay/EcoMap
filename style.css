@@ -3,15 +3,18 @@
    ============================================ */
 
 :root {
-    --fond: #f8f6f2;           /* crème - fond principal */
-    --texte: #222;             /* noir  - texte courant */
-    --marron: #6b4f3b;         /* marron */
-    --vert: #4a7c59;           /* vert */
-    --vert-clair: #a8d5ba;     /* vert clair */
+    --fond: #f8f6f2;           /* fond principal */
+    --texte: #222;             /* texte courant */
     --blanc: #ffffff;          /* blanc */
-    --gris-clair: #e8e8e8;     /* gris clair */
-    --rouge-alerte: #e74c3c;   /* rouge - alertes / faible potentiel */
+    --marron: #6b4f3b;         /* marron */
+    --rouge-faible: #e74c3c;   /* rouge - potentiel faible */
     --jaune-moyen: #f39c12;    /* jaune - potentiel moyen */
+    --vert-excellent: #4a7c59; /* vert - potentiel excellent */
+
+    --solaire:#f4c542;
+    --hydrolique:#4da6ff;
+    --geothermie:#e67e22;
+    --eolien:#2ecc71;
 }
 
 
@@ -85,6 +88,15 @@ html {
     color: var(--texte);
 }
 
+.titre-section {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--marron);
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+
 /* ============================================
    EN-TÊTE
    ============================================ */
@@ -125,7 +137,7 @@ html {
 .en_tete h2 {
     font-size: 1.5rem;
     font-weight: 500;
-    color: var(--vert);
+    color: var(--vert-excellent);
     margin-bottom: 20px;
 }
 
@@ -141,7 +153,7 @@ html {
 .bouton {
     display: inline-block;
     padding: 14px 35px;
-    background-color: var(--vert);
+    background-color: var(--vert-excellent);
     color: var(--blanc);
     text-decoration: none;
     border-radius: 30px;
@@ -214,7 +226,7 @@ html {
 }
 
 /* ============================================
-   SECTION CARTE + POTENTIEL 
+   CARTE
    ============================================ */
 
 .section-carte {
@@ -233,7 +245,7 @@ html {
     flex: 2;
     border-radius: 15px;
     overflow: hidden;
-    height: 500px;
+    height: 550px;
     z-index:0;
 }
 
@@ -244,7 +256,7 @@ html {
 }
 
 /* ============================================
-   PANNEAU POTENTIEL ÉNERGÉTIQUE
+   POTENTIEL ÉNERGÉTIQUE
    ============================================ */
 
 .bloc-potentiel {
@@ -252,399 +264,366 @@ html {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    padding: 20px;
-    background: rgba(0, 120, 255, 0.12);
-    border-radius: 20px;
 }
 
-/* Titre du panneau */
+/* Titre potentiel */
 .titre-potentiel {
     font-size: 1.6rem;
     font-weight: 700;
     color: var(--marron);
     text-align: center;
-    margin-bottom: 5px;
 }
 
-/* Texte du lieu sélectionné */
-.lieu-selectionne {
+/* Texte du lieu sélectionné - sous titre potentiel */
+.sous-titre-potentiel {
     text-align: center;
-    font-size: 0.85rem;
-    color: #777;
-    font-style: italic;
-    min-height: 20px;
+    font-size: 0.95rem;
+    color: var(--texte);
 }
 
-/* Bloc note globale (dégradé vert) */
+
+/* Bloc note globale */
 .note-globale {
-    background: linear-gradient(135deg, var(--vert) 0%, var(--vert-clair) 100%);
-    padding: 18px;
-    border-radius: 12px;
+    background: var(--fond);
+    border-radius: 20px;
+    padding: 10px;
     text-align: center;
-    box-shadow: 0 4px 15px rgb(var(--gris-clair) | 0.15);
+    transition: background 0.3s ease;
+    margin-bottom:10px
 }
 
-.texte-global {
-    display: block;
-    color: var(--blanc);
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 6px;
-    text-transform: uppercase;
+/* couleurs selon score */
+.note-excellente {
+    background: var(--vert-excellent);
+}
+
+.note-moyenne {
+    background: var(--jaune-moyen);
+}
+
+.note-faible {
+    background: var(--rouge-faible);
+}
+
+/* titre */
+.titre-note-globale {
+    font-size: 1rem;
+    color: var(--texte);
+    margin-bottom: 12px;
     letter-spacing: 1px;
 }
 
-.chiffre-global {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--blanc);
+/* Bloc score */
+.score-global {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: baseline;
 }
 
-.sur-dix-global {
-    font-size: 1.3rem;
-    font-weight: 500;
+/* Note principale */
+#note-globale-valeur {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--texte);
 }
 
-/* Carte individuelle par type d'énergie */
+/* /10 */
+.sur-dix {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color:var(--texte);
+    opacity: 0.8;
+}
+
+/* CARTE ENERGIE */
+
 .carte-energie {
-    background-color: var(--fond);
-    padding: 12px 15px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-left: 4px solid var(--gris-clair);
+    background: var(--fond);
+    border-radius: 5px;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
 }
 
 .carte-energie:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-5px);
+    background: var(--blanc);
 }
 
-/* Icône de l'énergie */
-.icone-energie {
-    font-size: 1.6rem;
-    margin-bottom: 5px;
+.bar-energie {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    border-radius: 20px;
 }
 
-/* Nom de l'énergie */
+/* Intitulé */
+
 .nom-energie {
     font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--marron);
-    margin-bottom: 5px;
+    font-weight: bold;
 }
 
-/* Chiffre de la note */
+/* Couleurs */
+
+#carte-solaire .bar-energie {
+    border-left: 7px solid var(--solaire);
+}
+
+#carte-eolien .bar-energie{
+    border-left: 7px solid var(--eolien);
+}
+
+#carte-hydraulique .bar-energie {
+    border-left: 7px solid var(--hydrolique);
+}
+
+#carte-geothermie .bar-energie{
+    border-left: 7px solid var(--geothermie);
+}
+
+#carte-solaire .nom-energie{
+    color: var(--solaire);
+}
+
+#carte-eolien .nom-energie{
+    color: var(--eolien);
+}
+
+#carte-hydraulique .nom-energie{
+    color: var(--hydrolique);
+}
+
+#carte-geothermie .nom-energie{
+    color: var(--geothermie);
+}
+
+/* Score (/10) */
+
 .note-energie {
-    margin: 6px 0;
-}
-
-.chiffre-note {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--vert);
-    transition: color 0.4s ease;
-}
-
-.sur-dix {
-    font-size: 0.9rem;
-    color: var(--texte);
-}
-
-/* Description textuelle sous la note */
-.description-energie {
-    font-size: 0.78rem;
-    color: #666;
-    line-height: 1.4;
-    margin-bottom: 8px;
-}
-
-/* Barre de progression colorée */
-.barre-progression {
-    width: 100%;
-    height: 6px;
-    background-color: var(--gris-clair);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-top: 4px;
-}
-
-.barre-remplissage {
-    height: 100%;
-    background: linear-gradient(90deg, var(--vert-clair), var(--vert));
-    border-radius: 3px;
-    transition: width 0.8s ease;
-}
-
-/* Indicateur de chargement (spinner) */
-.chargement {
-    text-align: center;
-    padding: 15px;
-    color: var(--vert);
-    font-size: 0.9rem;
-}
-
-.spinner {
-    width: 30px;
-    height: 30px;
-    border: 3px solid var(--gris-clair);
-    border-top-color: var(--vert);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 10px;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-
-/* ============================================
-   TITRES DE SECTION (réutilisables)
-   ============================================ */
-
-.titre-section {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--marron);
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.description-section {
-    font-size: 1.1rem;
-    color: var(--texte);
-    text-align: center;
-    max-width: 700px;
-    margin: 0 auto 40px;
-    line-height: 1.7;
-}
-
-
-/* ============================================
-   SECTION MÉTHODOLOGIE (4 formules en grille)
-   ============================================ */
-
-.section-methodologie {
-    padding: 60px 20px;
-    background-color: var(--fond);
-}
-
-/* Grille 4 colonnes */
-.grille-formules {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-/* Bloc formule individuel */
-.bloc-formule {
-    background-color: var(--blanc);
-    padding: 25px;
-    border-radius: 15px;
-    border-left: 5px solid var(--vert);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease;
-}
-
-.bloc-formule:hover {
-    transform: translateY(-5px);
-}
-
-/* En-tête de la formule (icône + titre) */
-.entete-formule {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
+    align-items: baseline;
+    gap: 4px;
 }
 
-.icone-formule {
-    font-size: 2rem;
-}
-
-.entete-formule h3 {
-    font-size: 1.05rem;
-    color: var(--marron);
-}
-
-/* Formule mathématique stylisée */
-.formule {
-    background-color: var(--fond);
-    padding: 15px;
-    border-radius: 10px;
-    font-family: 'Courier New', monospace;
-    font-size: 1rem;
-    font-weight: 600;
-    text-align: center;
-    color: var(--vert);
-    margin-bottom: 15px;
-    border: 2px dashed var(--vert);
-}
-
-/* Liste de variables */
-.explication {
-    list-style: none;
-    padding: 0;
-}
-
-.explication li {
-    padding: 6px 0;
-    font-size: 0.83rem;
+.note {
+    font-size: 1.3rem;
+    font-weight: bold;
     color: var(--texte);
-    border-bottom: 1px solid var(--gris-clair);
 }
 
-.explication li:last-child {
-    border-bottom: none;
+.note-energie .sur-dix {
+    font-size: 0.85rem;
+    color: var(--texte);
 }
 
-.explication strong {
+.description-energie{
+    color:var(--texte);
+    opacity:0.7;
+}
+
+
+
+/* =========================
+     POPUP
+========================= */
+
+.popup-energie {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+/* caché */
+.hidden {
+    display: none;
+}
+
+/* contenu */
+.popup-contenu {
+    background: var(--fond);
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+}
+
+/* bouton fermer */
+.fermer {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.popup-contenu.solaire {
+    border-top: 5px solid var(--solaire);
+}
+
+.popup-contenu.eolien {
+    border-top: 5px solid var(--eolien);
+}
+
+.popup-contenu.hydraulique {
+    border-top: 5px solid var(--hydrolique);
+}
+
+.popup-contenu.geothermie {
+    border-top: 5px solid var(--geothermie);
+}
+
+/* ============================================
+    FORMULAIRE DE CONTACT
+    =========================================== */
+
+.section-contact {
+    background: var(--fond);
+    padding: 50px;
+}
+
+.contact{
+    display: flex;
+    justify-content: center;
+}
+
+.formulaire-contact {
+    width: 95%;
+    background: var(--fond);
+    margin-bottom:20px
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.champ {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.champ label {
+    font-size: 0.9rem;
     color: var(--marron);
-    font-weight: 600;
+    font-weight: bold;
 }
+
+.champ input,
+.champ textarea {
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    resize: none;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+
+.bouton-envoyer {
+    padding: 12px;
+    background: var(--vert-excellent);
+    color: var(--blanc);
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.bouton-envoyer:hover {
+    background: var(--marron);
+}
+
+.hidden {
+    display: none;
+}
+
+
 
 
 /* ============================================
-   SECTION ÉQUIPE (4 membres en grille)
+   SECTION ÉQUIPE 
    ============================================ */
 
 .section-equipe {
-    padding: 60px 20px;
-    background-color: var(--blanc);
+    padding: 20px 5px;
+    background-color: var(--fond);
 }
 
-/* Grille 4 colonnes */
+/* grille pour l'équipe (4 membres) */
+
 .grille-equipe {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 25px;
-    max-width: 1200px;
+    padding-top:30px;
     margin: 0 auto;
+    max-width: 1200px;
 }
 
-/* Carte membre */
+/* carte membre*/
+
 .carte-membre {
-    background-color: var(--fond);
-    padding: 35px 20px;
-    border-radius: 15px;
+    background: var(--blanc);
+    padding: 30px 20px;
+    border-radius: 18px;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
+/* effet hover moderne */
 .carte-membre:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px);
 }
 
-/* Avatar initiales du membre */
-.avatar-membre {
-    width: 65px;
-    height: 65px;
-    background: linear-gradient(135deg, var(--vert), var(--marron));
-    color: var(--blanc);
+/* 2 lettres */
+
+.initial-membre {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 15px;
     border-radius: 50%;
+    color: var(--blanc);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin: 0 auto 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
-/* Nom du membre */
+.initial-membre.lindsay{
+    background: linear-gradient(135deg, var(--solaire), var(--eolien));
+} 
+
+.initial-membre.oceane{
+    background:linear-gradient(135deg, var(--eolien), var(--hydrolique));
+} 
+
+.initial-membre.miahy{
+    background: linear-gradient(135deg, var(--hydrolique), var(--geothermie));
+} 
+
+.initial-membre.mraati{
+    background: linear-gradient(135deg, var(--geothermie), var(--solaire));
+} 
+
+/* Nom et prénom des membres du projet*/
+
 .nom-membre {
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--marron);
+    margin-bottom: 5px;
 }
 
-
-/* ============================================
-   FORMULAIRE DE CONTACT
-   ============================================ */
-
-.section-contact {
-    padding: 60px 20px;
-    background-color: var(--fond);
-}
-
-/* Formulaire centré */
-.formulaire-contact {
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: var(--blanc);
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Groupe label + input */
-.groupe-champ {
-    margin-bottom: 25px;
-}
-
-.groupe-champ label {
-    display: block;
-    font-weight: 600;
-    color: var(--marron);
-    margin-bottom: 8px;
-}
-
-.groupe-champ input,
-.groupe-champ textarea {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid var(--gris-clair);
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: 'Poppins', Arial, sans-serif;
-    transition: border-color 0.3s ease;
-}
-
-.groupe-champ input:focus,
-.groupe-champ textarea:focus {
-    outline: none;
-    border-color: var(--marron);
-}
-
-.groupe-champ textarea {
-    resize: vertical;
-}
-
-/* Bouton d'envoi */
-.bouton-envoyer {
-    width: 100%;
-    padding: 15px;
-    background-color: var(--vert);
-    color: var(--blanc);
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.bouton-envoyer:hover {
-    background-color: var(--marron);
-    transform: translateY(-2px);
-}
-
-/* Message de confirmation après envoi */
-.confirmation-envoi {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #d4edda;
-    color: #155724;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: 500;
-}
 
 
 /* ============================================
@@ -652,25 +631,19 @@ html {
    ============================================ */
 
 .pied-de-page {
+    margin-top: 50px;
     background-color: var(--marron);
     color: var(--blanc);
     padding: 40px 20px 20px;
 }
 
-/* Grille footer : description + liens */
+/*  description + liens */
 .contenu-footer {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 40px;
     max-width: 1200px;
     margin: 0 auto 30px;
-}
-
-/* Titres des colonnes footer */
-.colonne-footer h3,
-.colonne-footer h4 {
-    color: var(--vert-clair);
-    margin-bottom: 15px;
 }
 
 .colonne-footer p {
@@ -680,28 +653,24 @@ html {
     opacity: 0.85;
 }
 
-/* Liste de liens footer */
-.liste-footer {
-    list-style: none;
-    padding: 0;
+/* Colonne droite */
+.colonne-droite {
+    text-align: right;
 }
 
-.liste-footer li {
-    margin: 8px 0;
-}
-
-.liste-footer a {
+/* Lien école */
+.colonne-droite a {
     color: var(--blanc);
     text-decoration: none;
-    transition: color 0.3s ease;
     font-size: 0.95rem;
+    transition: 0.3s ease;
 }
 
-.liste-footer a:hover {
-    color: var(--vert-clair);
+.colonne-droite a:hover {
+    color: var(--hydrolique);
 }
 
-/* Ligne de copyright */
+/* Copyright */
 .copyright {
     text-align: center;
     padding-top: 20px;
@@ -711,94 +680,3 @@ html {
 }
 
 
-/* ============================================
-   RESPONSIVE - TABLETTE (max 1024px)
-   ============================================ */
-
-@media (max-width: 1024px) {
-    /* Méthodologie : 2 colonnes */
-    .grille-formules {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    /* Équipe : 2 colonnes */
-    .grille-equipe {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-
-/* ============================================
-   RESPONSIVE - MOBILE (max 768px)
-   ============================================ */
-
-@media (max-width: 768px) {
-    /* Navigation en colonne */
-    .bar-navigation {
-        flex-direction: column;
-        gap: 15px;
-        padding: 20px;
-    }
-
-    .menu {
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-    }
-
-    /* Titres plus petits */
-    .en_tete h1 {
-        font-size: 2rem;
-    }
-
-    .titre-section {
-        font-size: 2rem;
-    }
-
-    /* Barre de recherche plus large */
-    .bar-recherche,
-    .suggestions-liste {
-        width: 80%;
-    }
-
-    /* Carte et potentiel en colonne */
-    .conteneur-principal {
-        grid-template-columns: 1fr;
-    }
-
-    /* Méthodologie : 1 colonne */
-    .grille-formules {
-        grid-template-columns: 1fr;
-    }
-
-    /* Équipe : 1 colonne */
-    .grille-equipe {
-        grid-template-columns: 1fr;
-    }
-
-    /* Footer en colonne */
-    .contenu-footer {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-}
-
-
-/* ============================================
-   RESPONSIVE - SMARTPHONE (max 480px)
-   ============================================ */
-
-@media (max-width: 480px) {
-    .bar-recherche,
-    .suggestions-liste {
-        width: 90%;
-    }
-
-    .formulaire-contact {
-        padding: 25px;
-    }
-
-    .conteneur-carte {
-        height: 350px;
-    }
-}
