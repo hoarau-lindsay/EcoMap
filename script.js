@@ -7,34 +7,29 @@
    FONCTIONS - Utiles
    ===================================================== */
 
-// Récupère un élément HTML par son id (raccourci)
 function getElement(id) {
     return document.getElementById(id);
 }
 
-// Modifie le texte d'un élément par son id
 function setTexte(id, texte) {
     const el = getElement(id);
     if (el) el.textContent = texte;
 }
 
-// Arrondit un nombre à 1 décimale 
 function arrondir(nombre) {
     return Math.round(nombre * 10) / 10;
 }
 
-// Bloque une valeur entre 0 et 10 (pour les notes)
 function limiterEntre0Et10(valeur) {
     if (valeur < 0) return 0;
     if (valeur > 10) return 10;
     return valeur;
 }
 
-// Calcule la distance (approximative) entre deux points GPS
 function distanceKm(lat1, lng1, lat2, lng2) {
     const dLat = Math.abs(lat1 - lat2);
     const dLng = Math.abs(lng1 - lng2);
-    return Math.sqrt(dLat * dLat + dLng * dLng) * 111; // 1 degré ≈ 111 km
+    return Math.sqrt(dLat * dLat + dLng * dLng) * 111;
 }
 
 
@@ -42,118 +37,72 @@ function distanceKm(lat1, lng1, lat2, lng2) {
    LA CARTE LEAFLET
    ===================================================== */
 
-// Création de la carte 
 const carte = L.map("carte-leaflet", {
-    center: [-21.11, 55.53], //Centré sur la Réunion
+    center: [-21.11, 55.53],
     zoom: 10
 });
 
-// Ajout du fond de carte OpenStreetMap 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap"
 }).addTo(carte);
 
-// Variable pour stocker le marqueur d'une postion
 let marqueurActuel = null;
 
 
-/* =========== Click sur la carte ============ */
-
-// Détecter l'endroit cliquer pour récupérer ces coordonnées (latitude et longitude)
+/* =========== Clic sur la carte ============ */
 
 carte.on("click", async function(evenement) {
     const lat = evenement.latlng.lat;
     const lng = evenement.latlng.lng;
-
-    // On va sur ce lieu et on calcule le potentiel
     await allerVersLieu(lat, lng);
 });
 
 
-/* ========== Barre de Recherche ================= */
-
-const champRecherche = getElement("champ-recherche");
-const listeSuggestions = getElement("suggestions");
-
-// Quand l'utilisateur appuie sur Entrée → lancer la recherche
-if (champRecherche) {
-    champRecherche.addEventListener("keydown", function(evenement) {
-        if (evenement.key === "Enter") {
-            lancerRecherche();
-        }
-    });
-}
-
-// Quand l'utilisateur tape → afficher des suggestions en dessous de lieu 
-if (champRecherche) {
-    champRecherche.addEventListener("input", function() {
-
-        // récupère le texte taper dans la bar de recherche (value) puis supprime les espaces inutiles (trim)
-        const texte = champRecherche.value.trim();
-
-        // On attend au moins 3 caractères avant de chercher
-        if (texte.length < 3) {
-            viderSuggestions();
-            return;
-        }
-
-        chercherSuggestions(texte);
-    });
-}
-
-
-/* ========= RECHERCHE D'UN LIEU  ============= */
+/* =====================================================
+   RECHERCHE D'UN LIEU (API Nominatim)
+   ===================================================== */
 
 // Lance la recherche quand on appuie sur Entrée
 async function lancerRecherche() {
+    const texte = champRecherche?.value?.trim();
+    if (!texte) return;
 
-    // Récupération du texte tapé dans le champ recherche 
-    const texte = champRecherche?.value?.trim(); // si il y a un texte (?. = continue si l'élément existe)
-    if (!texte) return;                          // si aucun texte tapé (stop - arrêt de la fonction)
+    const url = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(texte) + "&format=json&limit=1";
 
-    // Créatiopn de l'URL - Appel à l'API Nominatim pour trouver le lieu
-    const url = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(texte) + "&format=json&limit=1"; // NB : encodeURIComponent() adapte le texte pour une URL 
+    const reponse = await fetch(url);
+    const resultats = await reponse.json();
 
-    const reponse = await fetch(url);       // envoie de la requête vers l'API(fetch)
-    const resultats = await reponse.json(); // transforme la réponse en données (JSON pour exploitation)
-
-    // Dans le cas où aucun lieu n'a été trouvé
     if (resultats.length === 0) {
         alert("Lieu introuvable. Essayez un autre nom.");
         return;
     }
 
-    const lieu = resultats[0]; // (sinon) on récupère le premier résultat trouvé
-    viderSuggestions();        // efface la liste des suggestions affichées 
+    const lieu = resultats[0];
+    viderSuggestions();
 
-    // on se rend vers le lieu
-    await allerVersLieu(parseFloat(lieu.lat), parseFloat(lieu.lon), lieu.display_name); // NB : parseFloat() transforme (texte en nombres) - display_name = nom complet du lieu
+    await allerVersLieu(parseFloat(lieu.lat), parseFloat(lieu.lon), lieu.display_name);
 }
 
 // Affiche des suggestions pendant que l'utilisateur tape
 async function chercherSuggestions(texte) {
+    const url = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(texte) + "&format=json&limit=5";
 
-    // création de l'URL pour l'API Nominatim 
-    const url = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(texte) + "&format=json&limit=5"; // NB : maximum 5 résultats 
+    const reponse = await fetch(url);
+    const resultats = await reponse.json();
 
-    const reponse = await fetch(url);       // envoie de la requête
-    const resultats = await reponse.json(); // transformation (JSON) 
+    viderSuggestions();
 
-    viderSuggestions(); // vide l'ancienne liste de suggestions avant d'en afficher une nouvelle
-
-    // Pour chaque lieu trouvé
     resultats.forEach(function(lieu) {
+        const li = document.createElement("li");
+        li.textContent = lieu.display_name;
 
-        const li = document.createElement("li");      //création d'un élément <li> dans HTML 
-        li.textContent = lieu.display_name;           // affichage du nom complet du lieu 
-
-        li.onclick = function() {                     // si on clique sur le lieu 
-            champRecherche.value = lieu.display_name; // met le texte chosii dans le champ de la recherche 
+        li.onclick = function() {
+            champRecherche.value = lieu.display_name;
             viderSuggestions();
             allerVersLieu(parseFloat(lieu.lat), parseFloat(lieu.lon), lieu.display_name);
         };
 
-        listeSuggestions?.appendChild(li); // si elle existe ajoute la liste HTML 
+        listeSuggestions?.appendChild(li);
     });
 }
 
@@ -165,32 +114,30 @@ function viderSuggestions() {
 }
 
 
-/* ============= aller vers un lieu =================== */
+/* =====================================================
+   NAVIGATION VERS UN LIEU
+   ===================================================== */
 
-// Centre la carte, place un marqueur, et calcule le potentiel
 async function allerVersLieu(lat, lng, nomLieu) {
     carte.setView([lat, lng], 10);
-
     await placerMarqueur(lat, lng, nomLieu);
     await calculerEtAfficherPotentiel(lat, lng);
 }
 
 
-/* ========== Marqueur sur la carte ===================== */
+/* =====================================================
+   MARQUEUR SUR LA CARTE
+   ===================================================== */
 
-// Place un marqueur et affiche un popup avec le nom du lieu
 async function placerMarqueur(lat, lng, nomLieu) {
-    // Supprime l'ancien marqueur s'il existe
     if (marqueurActuel) {
         carte.removeLayer(marqueurActuel);
     }
 
-    // Si on n'a pas le nom, on le cherche via l'API
     if (!nomLieu) {
         nomLieu = await trouverNomLieu(lat, lng);
     }
 
-    // Création du nouveau marqueur
     marqueurActuel = L.marker([lat, lng]).addTo(carte);
     marqueurActuel.bindPopup(
         "<strong>" + nomLieu + "</strong><br>" +
@@ -198,7 +145,6 @@ async function placerMarqueur(lat, lng, nomLieu) {
     ).openPopup();
 }
 
-// Trouve le nom d'un lieu à partir de ses coordonnées
 async function trouverNomLieu(lat, lng) {
     try {
         const url = "https://nominatim.openstreetmap.org/reverse?lat=" + lat + "&lon=" + lng + "&format=json&accept-language=fr";
@@ -211,7 +157,9 @@ async function trouverNomLieu(lat, lng) {
 }
 
 
-/* ============= RÉCUPÉRATION DES DONNÉES MÉTÉO (API Open-Meteo) =============================== */
+/* =====================================================
+   DONNÉES MÉTÉO (API Open-Meteo)
+   ===================================================== */
 
 async function calculerEtAfficherPotentiel(lat, lng) {
     try {
@@ -224,10 +172,7 @@ async function calculerEtAfficherPotentiel(lat, lng) {
         const reponse = await fetch(url);
         const donnees = await reponse.json();
 
-        // Calcul des scores à partir des données météo
         const scores = calculerScores(donnees, lat, lng);
-
-        // Affichage des résultats dans le panneau
         afficherResultats(scores);
 
     } catch (erreur) {
@@ -236,21 +181,17 @@ async function calculerEtAfficherPotentiel(lat, lng) {
 }
 
 
-/* ================== Calcul de la moyenne donnee ================== */
-
-// Calcule la moyenne d'un tableau de nombres
+/* =====================================================
+   MOYENNE D'UN TABLEAU
+   ===================================================== */
 
 function moyenneTableau(tableau) {
-
-    // Si le tableau n'existe pas ou vide retourne 0
     if (!tableau || tableau.length === 0) return 0;
 
     let total = 0;
     let compteur = 0;
 
     tableau.forEach(function(valeur) {
-
-        // Transforme la valeur en nombre valide 
         const nombre = Number(valeur);
         if (Number.isFinite(nombre)) {
             total += nombre;
@@ -259,172 +200,119 @@ function moyenneTableau(tableau) {
     });
 
     if (compteur === 0) return 0;
-
     return total / compteur;
 }
 
 
 /* =====================================================
-   PARTIE 10 — CALCUL DES SCORES ÉNERGÉTIQUES
+   CALCUL DES SCORES ÉNERGÉTIQUES
    ===================================================== */
 
 function calculerScores(donneesMétéo, lat, lng) {
 
     const daily = donneesMétéo.daily;
 
-    // --- Données de 7 jours ---
     const soleilMoyenEnSecondes = moyenneTableau(daily?.sunshine_duration);
     const ventMoyenKmh          = moyenneTableau(daily?.wind_speed_10m_max);
     const pluieMoyenneMm        = moyenneTableau(daily?.precipitation_sum);
 
+    // SCORE SOLAIRE — 8h/jour = score 10
+    const soleilEnHeures   = soleilMoyenEnSecondes / 3600;
+    const scoreSolaire     = limiterEntre0Et10(arrondir((soleilEnHeures / 8) * 10));
 
-    // -----------------------------------------------
-    // SCORE SOLAIRE
-    // Plus il y a de soleil → plus le score est élevé
-    // On convertit les secondes en heures (÷ 3600)
-    // Un bon ensoleillement = 8h/jour ou plus
-    // -----------------------------------------------
-    const soleilEnHeures = soleilMoyenEnSecondes / 3600;
-    const scoreSolaireBrut = (soleilEnHeures / 8) * 10;
-    const scoreSolaire = limiterEntre0Et10(arrondir(scoreSolaireBrut));
+    // SCORE ÉOLIEN — 20 km/h = score 10
+    const scoreEolien      = limiterEntre0Et10(arrondir((ventMoyenKmh / 20) * 10));
 
+    // SCORE HYDRAULIQUE — 5 mm/jour = score 10
+    const scoreHydraulique = limiterEntre0Et10(arrondir((pluieMoyenneMm / 5) * 10));
 
-    // -----------------------------------------------
-    // SCORE ÉOLIEN
-    // Plus le vent est fort → plus le score est élevé
-    // Un bon vent pour l'éolien = 20 km/h ou plus
-    // -----------------------------------------------
-    const scoreEolienBrut = (ventMoyenKmh / 20) * 10;
-    const scoreEolien = limiterEntre0Et10(arrondir(scoreEolienBrut));
+    // SCORE GÉOTHERMIE — basé sur les zones volcaniques
+    const scoreGeothermie  = calculerScoreGeothermie(lat, lng);
 
-
-    // -----------------------------------------------
-    // SCORE HYDRAULIQUE
-    // Plus il pleut → plus le score est élevé
-    // Une bonne pluviométrie = 5 mm/jour ou plus
-    // -----------------------------------------------
-    const scoreHydrauliqueBrut = (pluieMoyenneMm / 5) * 10;
-    const scoreHydraulique = limiterEntre0Et10(arrondir(scoreHydrauliqueBrut));
-
-
-    // -----------------------------------------------
-    // SCORE GÉOTHERMIE
-    // Basé sur la proximité de zones volcaniques connues
-    // (indépendant de la météo)
-    // -----------------------------------------------
-    const scoreGeothermie = calculerScoreGeothermie(lat, lng);
-
-
-    // -----------------------------------------------
-    // SCORE GLOBAL
-    // On additionne les 4 notes puis on divise par 4
-    // -----------------------------------------------
-
-   
-    const somme = scoreSolaire + scoreEolien + scoreHydraulique + scoreGeothermie;
+    // SCORE GLOBAL — moyenne des 4
+    const somme       = scoreSolaire + scoreEolien + scoreHydraulique + scoreGeothermie;
     const scoreGlobal = Math.round((somme / 4) * 10) / 10;
-    console.log("Solaire:", scoreSolaire, "Eolien:", scoreEolien, "Hydraulique:", scoreHydraulique, "Géothermie:", scoreGeothermie, "→ Moyenne:", scoreGlobal);
-
-
-    // On retourne toutes les valeurs dont on a besoin 
 
     return {
-        solaire:     scoreSolaire,
-        eolien:      scoreEolien,
-        hydraulique: scoreHydraulique,
-        geothermie:  scoreGeothermie,
-        global:      scoreGlobal,
-
-        // Pour les descriptions dans le panneau
-        soleilHeures:   Math.round(soleilEnHeures),
-        ventKmh:        Math.round(ventMoyenKmh),
-        pluieMm:        pluieMoyenneMm.toFixed(1)
+        solaire:      scoreSolaire,
+        eolien:       scoreEolien,
+        hydraulique:  scoreHydraulique,
+        geothermie:   scoreGeothermie,
+        global:       scoreGlobal,
+        soleilHeures: Math.round(soleilEnHeures),
+        ventKmh:      Math.round(ventMoyenKmh),
+        pluieMm:      pluieMoyenneMm.toFixed(1)
     };
 }
 
 
-/* =============== GEOTHERMIE ======================== */
+/* =====================================================
+   SCORE GÉOTHERMIQUE
+   ===================================================== */
 
 function calculerScoreGeothermie(lat, lng) {
 
-    // --- ZONES VOLCANIQUES ET GÉOTHERMIQUES MONDIALES ---
-   
-    // La Réunion Piton de la Fournaise 
     const distanceFournaise = distanceKm(lat, lng, -21.244, 55.708);
     if (distanceFournaise < 15) return arrondir(limiterEntre0Et10(9.5 - distanceFournaise * 0.1));
 
-
-    // Islande (très forte activité géothermique)
     const distanceIslande = distanceKm(lat, lng, 64.0, -19.0);
     if (distanceIslande < 300) return arrondir(limiterEntre0Et10(9.5 - distanceIslande * 0.005));
 
-    // Sicile / Etna (Italie)
     const distanceEtna = distanceKm(lat, lng, 37.75, 15.0);
     if (distanceEtna < 150) return arrondir(limiterEntre0Et10(8.5 - distanceEtna * 0.01));
 
-    // Hawaii (USA)
     const distanceHawaii = distanceKm(lat, lng, 19.5, -155.5);
     if (distanceHawaii < 200) return arrondir(limiterEntre0Et10(9.0 - distanceHawaii * 0.008));
 
-    // Japon 
     const distanceJapon = distanceKm(lat, lng, 35.7, 137.7);
     if (distanceJapon < 500) return arrondir(limiterEntre0Et10(8.0 - distanceJapon * 0.005));
 
-    // Nouvelle-Zélande
     const distanceNouvelleZelande = distanceKm(lat, lng, -38.5, 176.0);
     if (distanceNouvelleZelande < 300) return arrondir(limiterEntre0Et10(8.5 - distanceNouvelleZelande * 0.008));
 
-    // Indonésie 
     const distanceIndonesie = distanceKm(lat, lng, -7.5, 110.0);
     if (distanceIndonesie < 400) return arrondir(limiterEntre0Et10(8.5 - distanceIndonesie * 0.006));
 
-    // Kenya 
     const distanceKenya = distanceKm(lat, lng, 0.5, 36.0);
     if (distanceKenya < 300) return arrondir(limiterEntre0Et10(7.5 - distanceKenya * 0.007));
 
-    // Ethiopie 
     const distanceEthiopie = distanceKm(lat, lng, 11.5, 40.5);
     if (distanceEthiopie < 300) return arrondir(limiterEntre0Et10(7.0 - distanceEthiopie * 0.007));
 
-    // Mexique 
     const distanceMexique = distanceKm(lat, lng, 19.5, -99.1);
     if (distanceMexique < 400) return arrondir(limiterEntre0Et10(7.0 - distanceMexique * 0.006));
 
-    // Turquie 
     const distanceTurquie = distanceKm(lat, lng, 38.0, 29.0);
     if (distanceTurquie < 300) return arrondir(limiterEntre0Et10(7.5 - distanceTurquie * 0.008));
 
-    // Filipinnes 
     const distanceFilipinnes = distanceKm(lat, lng, 12.5, 122.0);
     if (distanceFilipinnes < 400) return arrondir(limiterEntre0Et10(8.0 - distanceFilipinnes * 0.006));
 
-    // Par défaut : potentiel faible si aucune zone volcanique proche
     return 2.0;
 }
 
 
-/* ====== AFFICHAGE DES RÉSULTATS ================== */
+/* =====================================================
+   AFFICHAGE DES RÉSULTATS
+   ===================================================== */
 
 function afficherResultats(scores) {
 
-    // --- Notes sur chaque carte énergie ---
     setTexte("note-solaire",     scores.solaire);
     setTexte("note-eolien",      scores.eolien);
     setTexte("note-hydraulique", scores.hydraulique);
     setTexte("note-geothermie",  scores.geothermie);
 
-    // --- Descriptions sous chaque note ---
     setTexte("desc-solaire",     scores.soleilHeures + "h d'ensoleillement par jour");
     setTexte("desc-eolien",      "Vent moyen : " + scores.ventKmh + " km/h");
     setTexte("desc-hydraulique", "Pluie : " + scores.pluieMm + " mm/jour");
     setTexte("desc-geothermie",  "Basé sur la géologie locale");
 
-    // --- Note globale --- 
+    // Note globale
     const el = document.getElementById("note-globale-valeur");
     if (el) el.textContent = String(scores.global);
 
-    // --- Commentaire global sous la note ---
-
+    // Commentaire global
     let commentaireGlobal = "";
     if (scores.global > 6) {
         commentaireGlobal = "🌿 Ce lieu présente un excellent potentiel énergétique à exploiter.";
@@ -435,28 +323,27 @@ function afficherResultats(scores) {
     }
     setTexte("commentaire-global", commentaireGlobal);
 
-    // --- Couleur du panneau note globale selon le score ---
-    const panneauNoteGlobale = getElement("note-globale-valeur")?.closest(".note-globale");
-
-    if (panneauNoteGlobale) {
-        // On retire d'abord les anciennes couleurs
-        panneauNoteGlobale.classList.remove("note-excellente", "note-moyenne", "note-faible");
+    // Couleur du panneau note globale
+    const panneau = getElement("note-globale-valeur")?.closest(".note-globale");
+    if (panneau) {
+        panneau.classList.remove("note-excellente", "note-moyenne", "note-faible");
 
         if (scores.global > 6) {
-            panneauNoteGlobale.classList.add("note-excellente");
+            panneau.classList.add("note-excellente");
         } else if (scores.global >= 4) {
-            panneauNoteGlobale.classList.add("note-moyenne");
+            panneau.classList.add("note-moyenne");
         } else {
-            panneauNoteGlobale.classList.add("note-faible");
+            panneau.classList.add("note-faible");
         }
     }
 
-    // --- Mise à jour des popups ---
     mettreAJourPopups(scores);
 }
 
 
-/* ====  POPUPS ÉNERGIE =================== */
+/* =====================================================
+   POPUPS
+   ===================================================== */
 
 function mettreAJourPopups(scores) {
     mettreAJourUnPopup("popup-solaire",     scores.solaire,     scores.soleilHeures + "h d'ensoleillement/jour");
@@ -465,40 +352,29 @@ function mettreAJourPopups(scores) {
     mettreAJourUnPopup("popup-geothermie",  scores.geothermie,  "Basé sur l'activité géologique locale");
 }
 
-// Met à jour un seul popup avec la note, la couleur et le message
 function mettreAJourUnPopup(idPopup, note, description) {
     const popup = getElement(idPopup);
     if (!popup) return;
 
-    // Affiche la note dans le popup
     const noteEl = popup.querySelector(".popup-note");
     if (noteEl) {
         noteEl.textContent = note + " /10";
-
-        // Couleur de la note selon le score
-        if (note >= 7) {
-            noteEl.style.color = "green";
-        } else if (note >= 4) {
-            noteEl.style.color = "orange";
-        } else {
-            noteEl.style.color = "red";
-        }
+        if (note >= 7)      noteEl.style.color = "green";
+        else if (note >= 4) noteEl.style.color = "orange";
+        else                noteEl.style.color = "red";
     }
 
-    // Affiche le message selon la note
     const messageEl = popup.querySelector(".popup-message");
     if (messageEl) {
         if (note > 6) {
-            messageEl.textContent = "✅ Excellent potentiel énergétique pour ce lieu. Les conditions sont optimales pour un projet viable et durable, avec un fort potentiel de production d’énergie renouvelable.  C’est une opportunité intéressante pour développer un projet à impact positif sur la transition écologique.";
+            messageEl.textContent = "✅ Excellent potentiel énergétique pour ce lieu. Les conditions sont optimales pour un projet viable et durable, avec un fort potentiel de production d'énergie renouvelable. C'est une opportunité intéressante pour développer un projet à impact positif sur la transition écologique.";
         } else if (note >= 4) {
-            messageEl.textContent = "🔍 Potentiel modéré. Le projet est envisageable sous réserve d’une analyse plus approfondie. Avec les bons ajustements et les bons outils, ce site peut devenir une solution énergétique pertinente et durable. Vous pourriez faire partie des premiers à valoriser ce potentiel énergétique sur ce territoire.";
+            messageEl.textContent = "🔍 Potentiel modéré. Le projet est envisageable sous réserve d'une analyse plus approfondie. Avec les bons ajustements et les bons outils, ce site peut devenir une solution énergétique pertinente et durable.";
         } else {
-            messageEl.textContent = "❌ Potentiel très limité. Les conditions actuelles ne sont pas favorables à un projet rentable. Seules des solutions innovantes ou des adaptations techniques majeures pourraient rendre le site exploitable. Conseil: Il est conseillé d’explorer d’autres sites ou d’autres sources de potentiel énergétique.";
-           
+            messageEl.textContent = "❌ Potentiel très limité. Les conditions actuelles ne sont pas favorables à un projet rentable. Seules des solutions innovantes ou des adaptations techniques majeures pourraient rendre le site exploitable.";
         }
     }
 
-    // Affiche la description météo
     const descEl = popup.querySelector(".popup-description");
     if (descEl) {
         descEl.textContent = description;
@@ -506,39 +382,66 @@ function mettreAJourUnPopup(idPopup, note, description) {
 }
 
 
-/* ================== POPUPS ================== */
+/* =====================================================
+   OUVERTURE ET FERMETURE DES POPUPS
+   ===================================================== */
 
-// Ouverture des popups quand on clique sur une carte énergie
 getElement("carte-solaire")?.addEventListener("click", function() {
     getElement("popup-solaire")?.classList.remove("hidden");
 });
-
 getElement("carte-eolien")?.addEventListener("click", function() {
     getElement("popup-eolien")?.classList.remove("hidden");
 });
-
 getElement("carte-hydraulique")?.addEventListener("click", function() {
     getElement("popup-hydraulique")?.classList.remove("hidden");
 });
-
 getElement("carte-geothermie")?.addEventListener("click", function() {
     getElement("popup-geothermie")?.classList.remove("hidden");
 });
 
-
-// Fermeture des popups quand on clique sur la croix (✖)
 getElement("close-solaire")?.addEventListener("click", function() {
     getElement("popup-solaire")?.classList.add("hidden");
 });
-
 getElement("close-eolien")?.addEventListener("click", function() {
     getElement("popup-eolien")?.classList.add("hidden");
 });
-
 getElement("close-hydraulique")?.addEventListener("click", function() {
     getElement("popup-hydraulique")?.classList.add("hidden");
 });
-
 getElement("close-geothermie")?.addEventListener("click", function() {
     getElement("popup-geothermie")?.classList.add("hidden");
 });
+
+
+/* =====================================================
+   BARRE DE RECHERCHE
+   — Placés ICI, après toutes les fonctions,
+     pour être sûr que lancerRecherche() et
+     chercherSuggestions() sont bien définies
+   ===================================================== */
+
+const champRecherche   = getElement("champ-recherche");
+const listeSuggestions = getElement("suggestions");
+
+// Entrée → lancer la recherche
+if (champRecherche) {
+    champRecherche.addEventListener("keydown", function(evenement) {
+        if (evenement.key === "Enter") {
+            lancerRecherche();
+        }
+    });
+}
+
+// Frappe → afficher les suggestions
+if (champRecherche) {
+    champRecherche.addEventListener("input", function() {
+        const texte = champRecherche.value.trim();
+
+        if (texte.length < 3) {
+            viderSuggestions();
+            return;
+        }
+
+        chercherSuggestions(texte);
+    });
+}
