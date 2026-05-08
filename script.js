@@ -77,27 +77,33 @@ const listeSuggestions = getElement("suggestions");
 
 // Quand l'utilisateur appuie sur Entrée → lancer la recherche
 if (champRecherche) {
-    champRecherche.addEventListener("keydown", function(evenement) {
+    champRecherche.addEventListener("keydown", function (evenement) {
         if (evenement.key === "Enter") {
+            evenement.preventDefault();
             lancerRecherche();
         }
     });
 }
 
-// Quand l'utilisateur tape → afficher des suggestions en dessous de lieu 
-if (champRecherche) {
-    champRecherche.addEventListener("input", function() {
 
+let timeoutSuggestions;
+
+if (champRecherche) {
+    champRecherche.addEventListener("input", function () {
         // récupère le texte taper dans la bar de recherche (value) puis supprime les espaces inutiles (trim)
         const texte = champRecherche.value.trim();
 
-        // On attend au moins 3 caractères avant de chercher
+         // On attend au moins 3 caractères avant de chercher
         if (texte.length < 3) {
             viderSuggestions();
             return;
         }
 
-        chercherSuggestions(texte);
+        clearTimeout(timeoutSuggestions);
+
+        timeoutSuggestions = setTimeout(() => {
+            chercherSuggestions(texte);
+        }, 300);
     });
 }
 
@@ -130,31 +136,65 @@ async function lancerRecherche() {
     await allerVersLieu(parseFloat(lieu.lat), parseFloat(lieu.lon), lieu.display_name); // NB : parseFloat() transforme (texte en nombres) - display_name = nom complet du lieu
 }
 
-// Affiche des suggestions pendant que l'utilisateur tape
+/*
+
 async function chercherSuggestions(texte) {
 
-    // création de l'URL pour l'API Nominatim 
-    const url = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(texte) + "&format=json&limit=5"; // NB : maximum 5 résultats 
+    
+    const url = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(texte) + "&format=json&limit=5"; 
 
-    const reponse = await fetch(url);       // envoie de la requête
-    const resultats = await reponse.json(); // transformation (JSON) 
+    const reponse = await fetch(url);       
+    const resultats = await reponse.json();  
 
-    viderSuggestions(); // vide l'ancienne liste de suggestions avant d'en afficher une nouvelle
+    viderSuggestions(); 
 
     // Pour chaque lieu trouvé
     resultats.forEach(function(lieu) {
 
-        const li = document.createElement("li");      //création d'un élément <li> dans HTML 
-        li.textContent = lieu.display_name;           // affichage du nom complet du lieu 
+        const li = document.createElement("li");     
+        li.textContent = lieu.display_name;           
 
-        li.onclick = function() {                     // si on clique sur le lieu 
-            champRecherche.value = lieu.display_name; // met le texte chosii dans le champ de la recherche 
+        li.onclick = function() {                     
+            champRecherche.value = lieu.display_name; 
             viderSuggestions();
             allerVersLieu(parseFloat(lieu.lat), parseFloat(lieu.lon), lieu.display_name);
         };
 
-        listeSuggestions?.appendChild(li); // si elle existe ajoute la liste HTML 
+        listeSuggestions?.appendChild(li); 
     });
+}*/
+// Affiche des suggestions pendant que l'utilisateur tape
+
+async function chercherSuggestions(texte) {
+    try {
+        // création de l'URL pour l'API Nominatim 
+        const url = "https://nominatim.openstreetmap.org/search?q=" 
+            + encodeURIComponent(texte) 
+            + "&format=json&limit=5";   // NB : maximum 5 résultats 
+
+        const reponse = await fetch(url);        // envoie de la requête    
+        if (!reponse.ok) return;                 // cas où la requête n'a pas fonctionné 
+        const resultats = await reponse.json();  // transformation (JSON)
+        if (!Array.isArray(resultats)) return;
+
+        viderSuggestions();                       // vide l'ancienne liste de suggestions avant d'en afficher une nouvelle
+
+        resultats.forEach(function(lieu) {
+            const li = document.createElement("li");   //création d'un élément <li> dans HTML 
+            li.textContent = lieu.display_name;        // affichage du nom complet du lieu 
+
+            li.onclick = function() {
+                champRecherche.value = lieu.display_name;   // met le texte chosii dans le champ de la recherche 
+                viderSuggestions();
+                allerVersLieu(parseFloat(lieu.lat), parseFloat(lieu.lon), lieu.display_name);
+            };
+
+            listeSuggestions?.appendChild(li);  // si elle existe ajoute la liste HTML 
+        });
+
+    } catch (e) {
+        console.log("Erreur suggestions :", e);
+    }
 }
 
 // Efface toutes les suggestions affichées
