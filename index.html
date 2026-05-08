@@ -99,6 +99,7 @@
                                 <span id="note-globale-valeur" class="note-globale-valeur">—</span>
                                 <span class="sur-dix">/10</span>
                             </div>
+                            <p id="commentaire-global" style="font-size:0.85rem; margin-top:8px; opacity:0.85;"></p>
                         </div>
 
                         <!-- CARTE ENERGIE -->
@@ -152,41 +153,46 @@
 
             <!--POP UP-->
             <section>
-                <div id="popup-solaire" class="popup-energie hidden">
+                                <div id="popup-solaire" class="popup-energie hidden">
                     <div class="popup-contenu solaire">
-                        <span class="fermer" data-close="popup-solaire">✖</span>
+                        <span class="fermer" id="close-solaire">✖</span>
                         <h2>☀️ Potentiel Photovoltaïque</h2>
-                        <p>Analyse du rayonnement solaire et du potentiel de production d’énergie solaire.</p>
+                        <p class="popup-description">Analyse du rayonnement solaire.</p>
                         <div class="popup-note">— /10</div>
+                        <p class="popup-message"></p>
                     </div>
                 </div>
 
                 <div id="popup-eolien" class="popup-energie hidden">
                     <div class="popup-contenu eolien">
-                        <span class="fermer" data-close="popup-eolien">✖</span>
+                        <span class="fermer" id="close-eolien">✖</span>
                         <h2>💨 Potentiel Éolien</h2>
-                        <p>Analyse des vents et de la capacité de production éolienne.</p>
+                        <p class="popup-description">Analyse des vents et de la capacité éolienne.</p>
                         <div class="popup-note">— /10</div>
+                        <p class="popup-message"></p>
                     </div>
                 </div>
 
                 <div id="popup-hydraulique" class="popup-energie hidden">
                     <div class="popup-contenu hydraulique">
-                        <span class="fermer" data-close="popup-hydraulique">✖</span>
+                        <span class="fermer" id="close-hydraulique">✖</span>
                         <h2>💧 Potentiel Hydrique</h2>
-                        <p>Analyse des ressources en eau et du potentiel hydroélectrique.</p>
+                        <p class="popup-description">Analyse des ressources en eau.</p>
                         <div class="popup-note">— /10</div>
+                        <p class="popup-message"></p>
                     </div>
                 </div>
 
                 <div id="popup-geothermie" class="popup-energie hidden">
                     <div class="popup-contenu geothermie">
-                        <span class="fermer" data-close="popup-geothermie">✖</span>
+                        <span class="fermer" id="close-geothermie">✖</span>
                         <h2>🌋 Potentiel Géothermique</h2>
-                        <p>Analyse de la chaleur terrestre et du potentiel géothermique.</p>
+                        <p class="popup-description">Analyse de la chaleur terrestre.</p>
                         <div class="popup-note">— /10</div>
+                        <p class="popup-message"></p>
                     </div>
                 </div>
+</div>
             </section>
             
             <!-- ===== FORMULAIRE CONTACT ===== -->
@@ -279,6 +285,6 @@
 
         <!-- Scripts JS -->
         <script src="script.js" defer></script>
-        <script src="animations.js" defer></script>
+        
     </body>
 </html>

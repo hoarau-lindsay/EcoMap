@@ -96,6 +96,9 @@ html {
     margin-bottom: 15px;
 }
 
+#carte-leaflet {
+    cursor: default;
+}
 
 /* ============================================
    EN-TÊTE
@@ -346,6 +349,7 @@ html {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
+    position: relative; 
 }
 
 .carte-energie:hover {
@@ -467,18 +471,22 @@ html {
 }
 
 .popup-contenu.solaire {
+    max-width: 700px;
     border-top: 5px solid var(--solaire);
 }
 
 .popup-contenu.eolien {
+    max-width: 700px;
     border-top: 5px solid var(--eolien);
 }
 
 .popup-contenu.hydraulique {
+    max-width: 700px;
     border-top: 5px solid var(--hydrolique);
 }
 
 .popup-contenu.geothermie {
+    max-width: 700px;
     border-top: 5px solid var(--geothermie);
 }
 
@@ -499,7 +507,7 @@ html {
 .formulaire-contact {
     width: 95%;
     background: var(--fond);
-    margin-bottom:20px
+    margin-bottom:20px;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
