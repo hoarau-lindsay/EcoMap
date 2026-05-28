@@ -583,3 +583,46 @@ getElement("close-geothermie")?.addEventListener("click", function() {
     getElement("popup-geothermie")?.classList.add("hidden");
 });
 
+
+
+/* ================== FORMULAIRE CONTACT → SUPABASE ================== */
+
+const SUPABASE_URL = "https://ysslpkcxrbytsftlhijf.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlzc2xwa2N4cmJ5dHNmdGxoaWpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTU2MTcsImV4cCI6MjA5NTUzMTYxN30._ZF8LfqXnOIxKeaE9oCyyLVJ2Yxk9bIpRec8PyBzcA0";
+
+const formulaire = document.getElementById("formulaire-contact");
+
+if (formulaire) {
+    formulaire.addEventListener("submit", async function (e) {
+        e.preventDefault(); // empêche le rechargement de la page
+
+        const nom     = document.getElementById("nom").value.trim();
+        const email   = document.getElementById("email").value.trim();
+        const message = document.getElementById("message").value.trim();
+
+        // Envoi vers Supabase
+        const reponse = await fetch(SUPABASE_URL + "/rest/v1/Contacts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_KEY,
+                "Authorization": "Bearer " + SUPABASE_KEY,
+                "Prefer": "return=minimal"
+            },
+            body: JSON.stringify({ nom, email, message })
+        });
+
+        const confirmation = document.getElementById("confirmation-envoi");
+
+        if (reponse.ok) {
+            // Affiche le message de confirmation
+            confirmation?.classList.remove("hidden");
+            formulaire.reset(); // vide le formulaire
+
+            // Cache la confirmation après 5 secondes
+            setTimeout(() => confirmation?.classList.add("hidden"), 5000);
+        } else {
+            alert("❌ Erreur lors de l'envoi. Veuillez réessayer.");
+        }
+    });
+}
